@@ -9,3 +9,8 @@ for x in range(1, 100):
         result.append(x)
 print(result)
 
+
+# List comprehension
+result = [x for x in range(1, 100) if x % 7 == 0 or x % 9 == 0]
+print(result)
+
