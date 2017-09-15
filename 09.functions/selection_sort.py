@@ -1,5 +1,6 @@
 sample = [9, 1, 6, 8, 4, 3, 2, 0, 5, 7]
 
+# 테스트로 첫 번째 루프만 실행
 def selection_sort(seq):
     seq = seq.copy()
     # 정렬할 리스트의 길이
@@ -26,7 +27,8 @@ def selection_sort(seq):
 
     return seq
 
-def sequential_search(seq):
+def selection_sort(seq):
+    seq = seq.copy()
     # for문을 전체 아이템수-1번만큼 순회하며, 각 순회마다 index값을 증가시키며 seq[index] 부터 끝까지의 리스트를 출력하도록 작성
     # example:
     #   [9, 1, 6, 8, 4, 3, 2, 0, 5, 7]
@@ -35,6 +37,27 @@ def sequential_search(seq):
     #   [8, 4, 3, 2, 0, 5, 7]
     #   [4, 3, 2, 0, 5, 7]
     #   ...
+    seq_len = len(seq)
+    
+    # 0부터 전체갯수-1 만큼 i값을 증가시키며 순회
+    for i in range(seq_len - 1):
+        print('Loop[%d], Current list: %s' % (i, seq))
+        min_index = i
+        min_value = seq[i]
+        print( 'Loop[%d]의 min_index: %d, min_value: %d' % (i, min_index, min_value))
+
+        for j in range(i, seq_len):
+            if seq[j] < min_value:
+                print(' Index[%d](%d)는 현재 min_value(%d)보다 작음.' % (j, seq[j], min_value))
+                min_index = j
+                min_value = seq[min_index]
+        
+        if i == min_index:
+            print('  바꿀내용이 없음')
+        else:
+            print('  Index[%d]와 Index[%d]를 교체' % (i, min_index))
+            seq[i], seq[min_index] = seq[min_index], seq[i]
+    return seq
 
 
 result = selection_sort(sample)
