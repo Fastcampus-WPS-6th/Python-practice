@@ -34,7 +34,7 @@ def search_from_source(p, s):
 
 
 source_string = 'Lux, the Lady of Luminosity'
-pattern_string = r'L\w{3}\b'
+pattern_string = r'L\w{5}\b'
 
 result = None
 try:
