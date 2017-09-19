@@ -24,7 +24,7 @@ def save_episode_list_to_file(webtoon_id, episode_list):
     """
     episode_list로 전달된 Episode의 리스트를
     쉼표단위로 속성을 구분, 라인단위로 episode를 구분해 저장
-    파일명은 <webtoon_id>_<첫 에피소드no>_<마지막 에피소드no>.txt
+    파일명은 <webtoon_id>_<가장 최근 에피소드no>_<가장 나중 에피소드no>.txt
     ex) 651673_1070_1050.txt
 
     ex)
@@ -33,10 +33,29 @@ def save_episode_list_to_file(webtoon_id, episode_list):
     1068,http://...jpg,109화 - 무언가,9.93,2017.09.13
     1067,http://...jpg,109화 - 무언가,9.93,2017.09.13
 
-    :param episode_list:
-    :param webtoon_id:
+    :param episode_list: Episode namedtuple의 list
+    :param webtoon_id: 웹툰 고유 ID값 (str또는 int)
     :return:
     """
+    filename = '{webtoon_id}_{first_episode_no}_{last_episode_no}.txt'.format(
+        webtoon_id=webtoon_id,
+        # episode_list의 0번째 Episode의 no속성
+        first_episode_no=episode_list[0].no,
+        # episode_list의 마지막 Episode의 no속성
+        last_episode_no=episode_list[-1].no,
+    )
+    # 위에서 작성한 <webtoon_id>_<first_episode_no>_<last_episode_no>.txt파일에 작성
+    with open(filename, 'wt') as f:
+        # 각 Episode를 순회하며 각 line에 해당하는 문자열을 생성, 기록
+        for episode in episode_list:
+            episode_info_string = '{},{},{},{},{}'.format(
+                episode.no,
+                episode.img_url,
+                episode.title,
+                episode.rating,
+                episode.created_date
+            )
+            f.write(episode_info_string + '\n')
 
 
 def get_webtoon_episode_list(webtoon_id, page=1):
@@ -93,3 +112,7 @@ def get_webtoon_episode_list(webtoon_id, page=1):
         episode_list.append(episode)
 
     return episode_list
+
+
+el = get_webtoon_episode_list(webtoon_yumi)
+save_episode_list_to_file(webtoon_yumi, el)
