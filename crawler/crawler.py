@@ -1,8 +1,10 @@
-from urllib.parse import urlparse, parse_qs
-from collections import namedtuple
-
+import pickle
 import requests
+
+from urllib.parse import urlparse, parse_qs
+
 from bs4 import BeautifulSoup
+from utils import Episode
 
 # NamedTuple(Episode) 을 사용해서
 #   이미지 주소(img_url)
@@ -15,9 +17,6 @@ from bs4 import BeautifulSoup
 # requests를 사용!
 webtoon_yumi = 651673
 webtoon_denma = 119874
-
-# Episode namedtuple정의
-Episode = namedtuple('Episode', ['no', 'img_url', 'title', 'rating', 'created_date'])
 
 
 def save_episode_list_to_file(webtoon_id, episode_list):
@@ -48,14 +47,22 @@ def save_episode_list_to_file(webtoon_id, episode_list):
     with open(filename, 'wt') as f:
         # 각 Episode를 순회하며 각 line에 해당하는 문자열을 생성, 기록
         for episode in episode_list:
-            episode_info_string = '{},{},{},{},{}'.format(
-                episode.no,
-                episode.img_url,
-                episode.title,
-                episode.rating,
-                episode.created_date
-            )
-            f.write(episode_info_string + '\n')
+            f.write('|'.join(episode) + '\n')
+
+
+def load_episode_list_from_file(path):
+    """
+    path에 해당하는 file을 읽어 Episode리스트를 생성해 리턴
+
+    1. file객체 f할당
+    2. readline()함수를 이용해 한줄씩 읽기 <- 다른방법도 있습니다
+    3. 한줄을 쉼표단위로 구분해서 Episode객체 생성
+    4. 객체들을 하나의 리스트에 담아 리턴
+    :param path:
+    :return:
+    """
+    with open(path, 'rt') as f:
+        return [Episode._make(line.strip().split('|')) for line in f]
 
 
 def get_webtoon_episode_list(webtoon_id, page=1):
@@ -114,5 +121,11 @@ def get_webtoon_episode_list(webtoon_id, page=1):
     return episode_list
 
 
-el = get_webtoon_episode_list(webtoon_yumi)
-save_episode_list_to_file(webtoon_yumi, el)
+# el = get_webtoon_episode_list(webtoon_yumi)
+# pickle.dump(el, open('yumi_pickle.txt', 'wb'))
+el = pickle.load(open('yumi_pickle.txt', 'rb'))
+print(el)
+
+
+# save_episode_list_to_file(webtoon_yumi, el)
+# load_episode_list_from_file('651673_250_241.txt')
