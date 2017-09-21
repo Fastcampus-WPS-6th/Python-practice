@@ -41,9 +41,33 @@ class NaverWebtoonCrawler:
     def up_to_date(self):
         """
         현재 가지고있는 episode_list가 웹상의 최신 episode까지 가지고 있는지
+        1. cur_episode_count = self.episode_list의 개수
+        2. total_episode_count = 웹상의 총 episode 개수
+        3. 위 두 변수의 값이 같으면 return True, 아니면 return False처리
+
         :return: boolean값
         """
-        return False
+        # 지금 가지고 있는 총 Episode의 개수
+        #   self.episode_list에 저장되어있음
+        #      -> list형 객체
+        #      -> list형 객체의 길이를 구하는 함수(시퀀스형 객체는 모두 가능)
+        #        -> 내장함수 len(s)
+        # cur_episode_count = len(self.episode_list)
+
+        # 웹상의 총 episode개수
+        # total_episode_count = self.total_episode_count
+
+        # 두 값이 같으면 True를, 아니면 False를 리턴
+        # if cur_episode_count == total_episode_count:
+        #     return True
+        # return False
+        # return cur_episode_count == total_episode_count
+        return len(self.episode_list) == self.total_episode_count
+
+
+
+
+
 
     def update_episode_list(self, force_update=False):
         """
