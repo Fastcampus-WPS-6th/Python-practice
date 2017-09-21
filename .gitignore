@@ -1,6 +1,7 @@
 lecture/
 .idea/
 __dev*
+crawler/db/
 
 
 # Created by https://www.gitignore.io/api/macos,python,virtualenv

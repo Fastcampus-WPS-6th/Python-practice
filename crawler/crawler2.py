@@ -19,6 +19,10 @@ class NaverWebtoonCrawler생성
             새로 업데이트된 episode목록만 생성
 
 """
+import os
+
+import pickle
+
 import utils
 
 
@@ -78,6 +82,7 @@ class NaverWebtoonCrawler:
         recent_episode_no = self.episode_list[0].no if self.episode_list else 0
         print('- Update episode list start (Recent episode no: %s) -' % recent_episode_no)
         page = 1
+        new_list = list()
         while True:
             print('  Get webtoon episode list (Loop %s)' % page)
             # 계속해서 증가하는 'page'를 이용해 다음 episode리스트들을 가져옴
@@ -86,8 +91,8 @@ class NaverWebtoonCrawler:
             for episode in el:
                 # 각 episode의 no가 recent_episode_no보다 클 경우,
                 # self.episode_list에 추가
-                if int(episode.no) > recent_episode_no:
-                    self.episode_list.append(episode)
+                if int(episode.no) > int(recent_episode_no):
+                    new_list.append(episode)
                     if int(episode.no) == 1:
                         break
                 else:
@@ -101,24 +106,55 @@ class NaverWebtoonCrawler:
             # while문을 빠져나가기위해 break실행
             break
 
+        self.episode_list = new_list + self.episode_list
+        return len(new_list)
+
+    def get_last_page_episode_list(self):
+        el = utils.get_webtoon_episode_list(self.webtoon_id, 99999)
+        self.episode_list = el
+        return len(self.episode_list)
+
     def save(self, path=None):
         """
         현재폴더를 기준으로 db/<webtoon_id>.txt 파일에
         pickle로 self.episode_list를 저장
-        :return: 성공여부
+
+        1. 폴더 생성시
+            os.path.isdir('db')
+                path가 directory인지
+            os.mkdir(path)
+                path의 디렉토리를 생성
+
+        2. 저장시
+            pickle.dump(obj, file)
+                obj -> Object (모든 객체 가능)
+                file -> File object (파일 객체, bytes형식으로 write가능한)
+
+        :return: None(없음)
         """
-        pass
+        # db폴더가 있는지 검사
+        if not os.path.isdir('db'):
+            # 없으면 폴더 생성
+            os.mkdir('db')
+
+        obj = self.episode_list
+        path = 'db/%s.txt' % self.webtoon_id
+        pickle.dump(obj, open(path, 'wb'))
 
     def load(self, path=None):
         """
         현재폴더를 기준으로 db/<webtoon_id>.txt 파일의 내용을 불러와
         pickle로 self.episode_list를 복원
-        :return:
+
+        1. 만약 db폴더가 없으면 or db/webtoon_id.txt파일이 없으면
+            -> "불러올 파일이 없습니다" 출력
+        2. 있으면 복원
+        :return: None(없음)
         """
-        pass
+        try:
+            path = f'db/{self.webtoon_id}.txt'
+            self.episode_list = pickle.load(open(path, 'rb'))
+        except FileNotFoundError:
+            print('파일이 없습니다')
 
 
-crawler = NaverWebtoonCrawler(696617)
-crawler.update_episode_list()
-for e in crawler.episode_list:
-    print(e)
