@@ -75,7 +75,7 @@ class NaverWebtoonCrawler:
         :param force_update: 이미 존재하는 episode도 강제로 업데이트
         :return: 추가된 episode의 수 (int)
         """
-        recent_episode_no = self.episode_list[0].no if self.episode_list else None
+        recent_episode_no = self.episode_list[0].no if self.episode_list else 0
         print('- Update episode list start (Recent episode no: %s) -' % recent_episode_no)
         page = 1
         while True:
@@ -86,8 +86,10 @@ class NaverWebtoonCrawler:
             for episode in el:
                 # 각 episode의 no가 recent_episode_no보다 클 경우,
                 # self.episode_list에 추가
-                if episode.no > recent_episode_no:
-                    self.episode_list.insert(0, episode)
+                if int(episode.no) > recent_episode_no:
+                    self.episode_list.append(episode)
+                    if int(episode.no) == 1:
+                        break
                 else:
                     break
             # break가 호출되지 않았을 때
@@ -98,7 +100,6 @@ class NaverWebtoonCrawler:
             # el의 for문에서 break가 호출될 경우(더 이상 추가할 episode없음
             # while문을 빠져나가기위해 break실행
             break
-
 
     def save(self, path=None):
         """
@@ -117,5 +118,7 @@ class NaverWebtoonCrawler:
         pass
 
 
-nwc = NaverWebtoonCrawler(651673)
-print(nwc.total_episode_count)
+crawler = NaverWebtoonCrawler(696617)
+crawler.update_episode_list()
+for e in crawler.episode_list:
+    print(e)

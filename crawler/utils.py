@@ -5,6 +5,8 @@ from urllib.parse import urlparse, parse_qs
 from bs4 import BeautifulSoup
 
 Episode = namedtuple('Episode', ['no', 'img_url', 'title', 'rating', 'created_date'])
+webtoon_yumi = 651673
+webtoon_p = 696617
 
 
 def get_webtoon_episode_list(webtoon_id, page=1):
